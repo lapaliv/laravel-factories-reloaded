@@ -8,6 +8,12 @@ This package generates `class-based` model factories, which you can use instead 
 
 ![Screenshot of the command](http://screenshots.nomoreencore.com/lfr_social_image_full.png)
 
+## Original URL
+This is fork
+```
+https://github.com/christophrumpel/laravel-factories-reloaded
+```
+
 
 ## Benefits
 

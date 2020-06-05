@@ -1,5 +1,5 @@
 {
-    "name": "christophrumpel/laravel-factories-reloaded",
+    "name": "lapaliv/laravel-factories-reloaded",
     "description": "This package sits on top of Laravel factories and provides you with dedicated factory classes for every model.",
     "keywords": [
         "christophrumpel",
