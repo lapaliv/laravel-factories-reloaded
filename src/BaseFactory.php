@@ -4,7 +4,6 @@ namespace Christophrumpel\LaravelFactoriesReloaded;
 
 use Faker\Factory as FakerFactory;
 use Faker\Generator;
-use Illuminate\Support\Collection;
 use ReflectionClass;
 
 abstract class BaseFactory implements FactoryInterface
@@ -38,7 +37,9 @@ abstract class BaseFactory implements FactoryInterface
     protected function build(array $extra = [], string $creationType = 'create')
     {
         $modelData = $this->prepareModelData($creationType, $this->getDefaults($this->faker));
-        $model = $this->unguardedIfNeeded(fn () => $this->modelClass::$creationType(array_merge($modelData, $this->overwriteDefaults, $extra)));
+        $model = $this->unguardedIfNeeded(function () use($modelData, $extra, $creationType) {
+            return $this->modelClass::$creationType(array_merge($modelData, $this->overwriteDefaults, $extra));
+        });
 
         if ($this->relatedModelFactories->isEmpty()) {
             return $model;
@@ -48,7 +49,7 @@ abstract class BaseFactory implements FactoryInterface
 
         if ($creationType === 'create') {
             $model->{$this->relatedModelRelationshipName}()
-                    ->saveMany($relatedModels);
+                ->saveMany($relatedModels);
 
             return $model;
         }
@@ -58,7 +59,7 @@ abstract class BaseFactory implements FactoryInterface
 
     protected function unguardedIfNeeded(\Closure $closure)
     {
-        if (! config('factories-reloaded.unguard_models')) {
+        if (!config('factories-reloaded.unguard_models')) {
             return $closure();
         }
 
@@ -76,7 +77,9 @@ abstract class BaseFactory implements FactoryInterface
     {
         $clone = clone $this;
 
-        $clone->relatedModelFactories = collect()->times($times, fn () => $this->getFactoryFromClassName($relatedModelClass));
+        $clone->relatedModelFactories = collect()->times($times, function() use($relatedModelClass){
+            return $this->getFactoryFromClassName($relatedModelClass);
+        });
 
         $clone->relatedModelRelationshipName = $relationshipName;
 
@@ -85,6 +88,7 @@ abstract class BaseFactory implements FactoryInterface
 
     /**
      * @param array|callable $attributes
+     *
      * @return $this
      */
     public function overwriteDefaults($attributes): self
@@ -101,8 +105,32 @@ abstract class BaseFactory implements FactoryInterface
     protected function getFactoryFromClassName(string $className): FactoryInterface
     {
         $baseClassName = (new ReflectionClass($className))->getShortName();
-        $factoryClass = config('factories-reloaded.factories_namespace').'\\'.$baseClassName.'Factory';
+        $factoryClass = config('factories-reloaded.factories_namespace') . '\\' . $baseClassName . 'Factory';
 
         return new $factoryClass($this->faker);
+    }
+
+    /**
+     * Creates in DB and returns the new fake model
+     *
+     * @param array $extra
+     *
+     * @return mixed
+     */
+    public function create(array $extra = [])
+    {
+        return $this->build($extra);
+    }
+
+    /**
+     * Returns the new fake model
+     *
+     * @param array $extra
+     *
+     * @return mixed
+     */
+    public function make(array $extra = [])
+    {
+        return $this->build($extra, 'make');
     }
 }

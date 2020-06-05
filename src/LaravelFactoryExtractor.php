@@ -225,6 +225,9 @@ class LaravelFactoryExtractor
 
                 return $lines->prepend([
                     '',
+                    '/**',
+                    ' * Replaced the default values as a state ' . $this->getStateMethodName($state),
+                    ' */',
                     'public function ' . $this->getStateMethodName($state) . '(): ' . class_basename($this->className) . 'Factory',
                     '{',
                     Str::replaceFirst('return ', 'return tap(clone $this)->overwriteDefaults(', $firstLine),
@@ -241,7 +244,7 @@ class LaravelFactoryExtractor
                 '    return tap(clone $this)->overwriteDefaults(function() {',
                 '    ' . $firstLine,
                     ])->merge($lines->map(static function ($line) {
-                        return '    ' . $line;
+                        return '    ' . str_replace('$faker', '$this->faker', $line);
                     }))->merge([
                 '    ' . $lastLine,
                 '    });',
@@ -252,7 +255,7 @@ class LaravelFactoryExtractor
                 return '';
             }
 
-            return '    ' . $line;
+            return '    ' . str_replace('$faker', '$this->faker', $line);
         })->implode("\n");
     }
 
