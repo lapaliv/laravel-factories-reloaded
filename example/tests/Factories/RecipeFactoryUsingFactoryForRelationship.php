@@ -8,7 +8,7 @@ use Faker\Generator;
 
 class RecipeFactoryUsingFactoryForRelationship extends BaseFactory
 {
-    protected string $modelClass = Recipe::class;
+    protected $modelClass = Recipe::class;
 
     public function create(array $extra = []): Recipe
     {

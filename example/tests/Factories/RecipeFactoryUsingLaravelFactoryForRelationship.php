@@ -9,7 +9,7 @@ use Faker\Generator;
 
 class RecipeFactoryUsingLaravelFactoryForRelationship extends BaseFactory
 {
-    protected string $modelClass = Recipe::class;
+    protected $modelClass = Recipe::class;
 
     public function create(array $extra = []): Recipe
     {

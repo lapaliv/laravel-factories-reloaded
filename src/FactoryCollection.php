@@ -10,9 +10,9 @@ use Illuminate\Support\Facades\File;
 
 class FactoryCollection
 {
-    protected Collection $factoryFiles;
+    protected $factoryFiles;
 
-    protected bool $overwrite = false;
+    protected $overwrite = false;
 
     public function __construct()
     {

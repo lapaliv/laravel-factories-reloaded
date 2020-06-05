@@ -9,18 +9,30 @@ use DummyFullModelClass;
 
 class DummyFactory extends BaseFactory
 {
-    protected string $modelClass = DummyModelClass::class;
+    /**
+     * The name of model
+     */
+    protected $modelClass = DummyModelClass::class;
 
+    /**
+     * Creates in DB and returns the new fake model
+     */
     public function create(array $extra = []): DummyModelClass
     {
         return parent::build($extra);
     }
 
+    /**
+     * Returns the new fake model
+     */
     public function make(array $extra = []): DummyModelClass
     {
         return parent::build($extra, 'make');
     }
 
+    /**
+     * Returns the default values for the factory
+     */
     public function getDefaults(Faker $faker): array
     {
         {{ dummyData }}

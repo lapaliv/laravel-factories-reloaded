@@ -11,15 +11,15 @@ abstract class BaseFactory implements FactoryInterface
 {
     use TranslatesFactoryData;
 
-    protected string $modelClass;
+    protected $modelClass;
 
-    protected Collection $relatedModelFactories;
+    protected $relatedModelFactories;
 
-    protected string $relatedModelRelationshipName;
+    protected $relatedModelRelationshipName;
 
-    protected Generator $faker;
+    protected $faker;
 
-    protected array $overwriteDefaults = [];
+    protected $overwriteDefaults = [];
 
     public function __construct(Generator $faker)
     {

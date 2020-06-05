@@ -7,17 +7,17 @@ use Illuminate\Support\Str;
 
 class FactoryFile
 {
-    public string $modelClass;
+    public $modelClass;
 
-    protected bool $hasLaravelFactory;
+    protected $hasLaravelFactory;
 
-    protected string $defaults = 'return [];';
+    protected $defaults = 'return [];';
 
-    protected string $states = '';
+    protected $states = '';
 
-    protected bool $withStates = true;
+    protected $withStates = true;
 
-    protected string $uses = '';
+    protected $uses = '';
 
     public function __construct(string $modelClass)
     {

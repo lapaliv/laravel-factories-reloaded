@@ -5,7 +5,7 @@ use Illuminate\Support\Collection;
 
 class MultiFactoryCollection
 {
-    protected Collection $factories;
+    protected $factories;
 
     public function __construct(Collection $factories)
     {

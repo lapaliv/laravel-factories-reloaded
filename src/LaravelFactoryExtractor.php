@@ -10,11 +10,11 @@ use SplFileObject;
 
 class LaravelFactoryExtractor
 {
-    protected ?array $uses = null;
+    protected $uses = null;
 
-    protected string $className;
+    protected $className;
 
-    protected ObjectPrybar $factory;
+    protected $factory;
 
     public function __construct(string $className)
     {
@@ -85,6 +85,7 @@ class LaravelFactoryExtractor
 
     /**
      * @see https://gist.github.com/Zeronights/7b7d90fcf8d4daf9db0c
+     *
      * @param $reflection
      */
     protected function parseUseStatements($reflection)
@@ -136,7 +137,7 @@ class LaravelFactoryExtractor
                 continue;
             }
 
-            if ($token === ';' || ! is_array($token)) {
+            if ($token === ';' || !is_array($token)) {
                 if ($record) {
                     $useStatements[] = $currentUse;
                     $record = false;
@@ -198,17 +199,19 @@ class LaravelFactoryExtractor
     {
         $states = collect($this->factory->getProperty('states'));
 
-        if (! $states->has($this->className)) {
+        if (!$states->has($this->className)) {
             return '';
         }
 
         return collect($states->get($this->className))->map(function ($closure, $state) {
             throw_if(
-                ! is_callable($closure),
+                !is_callable($closure),
                 new \RuntimeException('One of your factory states is defined as an array. It must be of the type closure to import it.')
             );
 
-            $lines = collect($this->getClosureContent($closure))->filter()->map(fn ($item) => str_replace("\n", '', $item));
+            $lines = collect($this->getClosureContent($closure))->filter()->map(function ($item) {
+                return str_replace("\n", '', $item);
+            });
             $firstLine = $lines->shift();
             $lastLine = $lines->pop();
 
@@ -230,11 +233,16 @@ class LaravelFactoryExtractor
 
             return collect([
                 '',
+                '/**',
+                ' * Replaced the default values as a state ' . $this->getStateMethodName($state),
+                ' */',
                 'public function ' . $this->getStateMethodName($state) . '(): ' . class_basename($this->className) . 'Factory',
                 '{',
                 '    return tap(clone $this)->overwriteDefaults(function() {',
                 '    ' . $firstLine,
-            ])->merge($lines->map(fn ($line) => '    ' . $line))->merge([
+                    ])->merge($lines->map(static function ($line) {
+                        return '    ' . $line;
+                    }))->merge([
                 '    ' . $lastLine,
                 '    });',
                 '}',

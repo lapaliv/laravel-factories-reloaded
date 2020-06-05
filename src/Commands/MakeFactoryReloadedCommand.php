@@ -34,11 +34,11 @@ class MakeFactoryReloadedCommand extends Command
      */
     protected $description = 'Create new factory reloaded class.';
 
-    protected string $type = 'Factory';
+    protected $type = 'Factory';
 
-    protected FactoryCollection $factoryCollection;
+    protected $factoryCollection;
 
-    protected string $className;
+    protected $className;
 
     /**
      * Execute the console command.
