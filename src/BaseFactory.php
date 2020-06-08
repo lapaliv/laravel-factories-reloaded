@@ -37,8 +37,14 @@ abstract class BaseFactory implements FactoryInterface
     protected function build(array $extra = [], string $creationType = 'create')
     {
         $modelData = $this->prepareModelData($creationType, $this->getDefaults($this->faker));
-        $model = $this->unguardedIfNeeded(function () use($modelData, $extra, $creationType) {
-            return $this->modelClass::$creationType(array_merge($modelData, $this->overwriteDefaults, $extra));
+        $model = $this->unguardedIfNeeded(function () use ($modelData, $extra, $creationType) {
+            $data = array_merge($modelData, $this->overwriteDefaults, $extra);
+            foreach ($data as $key => $value) {
+                if (is_callable($value)) {
+                    $data[$key] = $value();
+                }
+            }
+            return $this->modelClass::$creationType($data);
         });
 
         if ($this->relatedModelFactories->isEmpty()) {
@@ -77,7 +83,7 @@ abstract class BaseFactory implements FactoryInterface
     {
         $clone = clone $this;
 
-        $clone->relatedModelFactories = collect()->times($times, function() use($relatedModelClass){
+        $clone->relatedModelFactories = collect()->times($times, function () use ($relatedModelClass) {
             return $this->getFactoryFromClassName($relatedModelClass);
         });
 

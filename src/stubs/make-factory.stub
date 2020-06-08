@@ -23,6 +23,10 @@ class DummyFactory extends BaseFactory
 
     /**
      * Returns the default values for the factory
+     *
+     * @param Faker $faker
+     *
+     * @return array
      */
     public function getDefaults(Faker $faker): array
     {

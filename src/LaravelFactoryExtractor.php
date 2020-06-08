@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Support\Str;
 use ReflectionFunction;
 use SplFileObject;
+use Tests\Factories\ChannelFactory;
 
 class LaravelFactoryExtractor
 {
@@ -227,6 +228,8 @@ class LaravelFactoryExtractor
                     '',
                     '/**',
                     ' * Replaced the default values as a state ' . $this->getStateMethodName($state),
+                    ' *',
+                    ' * @return ' . class_basename($this->className) . 'Factory',
                     ' */',
                     'public function ' . $this->getStateMethodName($state) . '(): ' . class_basename($this->className) . 'Factory',
                     '{',
@@ -238,6 +241,8 @@ class LaravelFactoryExtractor
                 '',
                 '/**',
                 ' * Replaced the default values as a state ' . $this->getStateMethodName($state),
+                ' *',
+                ' * @return ' . class_basename($this->className) . 'Factory',
                 ' */',
                 'public function ' . $this->getStateMethodName($state) . '(): ' . class_basename($this->className) . 'Factory',
                 '{',
