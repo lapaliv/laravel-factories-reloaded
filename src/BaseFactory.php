@@ -39,12 +39,19 @@ abstract class BaseFactory implements FactoryInterface
         $modelData = $this->prepareModelData($creationType, $this->getDefaults($this->faker));
         $model = $this->unguardedIfNeeded(function () use ($modelData, $extra, $creationType) {
             $data = array_merge($modelData, $this->overwriteDefaults, $extra);
+            $model = new $this->modelClass();
+
             foreach ($data as $key => $value) {
                 if (is_callable($value)) {
-                    $data[$key] = $value();
+                    $model[$key] = $value();
+                } else {
+                    $model[$key] = $value;
                 }
             }
-            return $this->modelClass::$creationType($data);
+
+            $model->save();
+
+            return $model;
         });
 
         if ($this->relatedModelFactories->isEmpty()) {
