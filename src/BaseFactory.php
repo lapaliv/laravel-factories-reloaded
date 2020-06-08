@@ -4,6 +4,7 @@ namespace Christophrumpel\LaravelFactoriesReloaded;
 
 use Faker\Factory as FakerFactory;
 use Faker\Generator;
+use Illuminate\Database\Eloquent\Model;
 use ReflectionClass;
 
 abstract class BaseFactory implements FactoryInterface
@@ -42,11 +43,15 @@ abstract class BaseFactory implements FactoryInterface
             $model = new $this->modelClass();
 
             foreach ($data as $key => $value) {
-                if (is_callable($value)) {
-                    $model[$key] = $value();
-                } else {
-                    $model[$key] = $value;
+                if ($value instanceof self) {
+                    /** @var Model $fakeModel */
+                    $fakeModel = $value->create();
+                    $value = $fakeModel->getKey();
+                } elseif (is_callable($value)) {
+                    $value = $value();
                 }
+
+                $model[$key] = $value;
             }
 
             $model->save();
